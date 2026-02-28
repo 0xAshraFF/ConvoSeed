@@ -1,5 +1,13 @@
 # ConvoSeed
 
+CSP-1 is the **missing third leg** of the agent identity stack:
+
+| Layer | Covers | Status |
+|---|---|---|
+| DID (W3C) | Who the user IS cryptographically | Specified |
+| MCP (Anthropic) | What tools the agent can ACCESS | Specified |
+| **CSP-1** | **How the user SPEAKS and THINKS** | **This work** |
+
 **Chat → Compress → 200KB `.fp` File → Decompress → Resume**
 
 ConvoSeed is an open protocol (CSP-1) for preserving the essence of a human-AI
@@ -149,18 +157,6 @@ These are the three open research questions. Collaboration welcome — open an I
 - [ ] Cross-model mapping
 - [ ] Public dataset (seeking contributors)
 - [ ] W3C Community Group submission
-
----
-
-## Relation to Existing Work
-
-CSP-1 is designed as the **third leg** of the emerging agent identity stack:
-
-| Layer | Covers | Status |
-|---|---|---|
-| DID (W3C) | Who the user IS cryptographically | Specified |
-| MCP (Anthropic) | What tools the agent can ACCESS | Specified |
-| **CSP-1** | **How the user SPEAKS and THINKS** | **This work** |
 
 ---
 

@@ -170,5 +170,3 @@ MIT. Open forever.
 
 Open an Issue for technical questions.  
 For collaboration or research enquiries: see CONTRIBUTING.md.
-
-*"Style is the math of the heart."*

@@ -1,36 +1,40 @@
 """
-convoseed-agent
-===============
-Capture, store, and retrieve agent conversation fingerprints.
+ConvoSeed Agent — CSP-1 fingerprint encoder, identifier, and decoder.
+
+The real implementation of the CSP-1 protocol for encoding conversational
+style into portable .fp fingerprint files.
 
 Quick start:
-    from convoseed_agent import ConvoSeedSession
+    from convoseed_agent import encode_conversation, identify, generate_with_prefix
 
-    with ConvoSeedSession(task_type="summarization", success_score=0.9) as session:
-        session.add_message("user", "Summarize this document...")
-        session.add_message("assistant", "The document covers three main points...")
-    # → ~/.convoseed/sessions/summarization_20260225_143022.fp
+Encode a conversation:
+    from convoseed_agent import encode_conversation
+    encode_conversation(messages, "identity.fp")
+
+Identify a speaker:
+    from convoseed_agent import identify
+    from sentence_transformers import SentenceTransformer
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+    winner, scores = identify("some message", ["a.fp", "b.fp"], model)
+
+Generate in someone's style:
+    from convoseed_agent import generate_with_prefix, load_fp
+    fp = load_fp("identity.fp")
+    output = generate_with_prefix("Tell me about your weekend", fp)
 """
 
-from .encoder import (
-    encode_conversation,
-    read_fp_meta,
-    read_fp_hdc,
-    compare_fp,
-    merge_fp,
-    PROTOCOL_VERSION,
-)
-from .wrapper import ConvoSeedSession, convoseed_task
-from .registry import (
-    index_directory,
-    query,
-    build_consensus,
-    list_task_types,
-    stats,
-)
-from .cache import SkillCache, SkillPrefix
-from .scheduler import run_once, start_daemon
+__version__ = "1.2.0"
+__author__ = "Ashraful Islam"
+__license__ = "MIT"
 
-__version__ = "1.1.0"
-__author__ = "Ashraful"
-__protocol__ = "CSP-1 v1.1"
+from convoseed_agent.encode import encode_conversation
+from convoseed_agent.identify import identify, load_fp
+from convoseed_agent.decode import generate_with_prefix, evaluate_similarity
+
+__all__ = [
+    "encode_conversation",
+    "identify",
+    "load_fp",
+    "generate_with_prefix",
+    "evaluate_similarity",
+]

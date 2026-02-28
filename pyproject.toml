@@ -8,7 +8,7 @@ version = "1.1.0"
 description = "Agent skill caching via CSP-1 fingerprints — every session makes the next one better"
 readme = "README.md"
 license = { text = "MIT" }
-authors = [{ name = "Ashraful", email = "" }]
+authors = [{ name = "Ashraful", email = "ashraful.islam.cse@gmail.com" }]
 requires-python = ">=3.10"
 keywords = [
     "ai", "agent", "llm", "skill-cache", "fingerprint",

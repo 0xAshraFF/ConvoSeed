@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init)",
+      "Bash(git remote add origin https://github.com/0xAshraFF/ConvoSeed.git)",
+      "Bash(git fetch origin)",
+      "Bash(git checkout main)",
+      "Bash(git checkout -b main --track origin/main -f)",
+      "Bash(git reset --mixed origin/main)",
+      "Bash(git push origin main)",
+      "Bash(gh --version)",
+      "Bash(brew install gh)"
+    ]
+  }
+}

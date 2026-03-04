@@ -37,11 +37,12 @@ Three independent validations on real data.
 |---|---|---|
 | **V1 — Speaker Identification** | p < 10⁻¹⁰⁰ | SBERT→PCA→HDC, 524-message conversation, 1,000 trials |
 | **V2 — Style Preservation** | 87% win rate (9.0 vs 2.67/10) | Blind A/B, 15 trials, 5 personas, randomized, Claude-as-judge |
-| **V3 — Skill Caching** | +69.2% lift (22/25 vs 13/25) | Hard edge-case tasks, 25 trials, binary ground-truth scoring, 0 regressions |
+| **V3 — Skill Caching** | +63.0% lift (88/100 vs 54/100) | Hard edge-case tasks, 100 trials, binary ground-truth scoring, 0 regressions |
 
 - **p < 10⁻¹⁰⁰** statistical significance on speaker identification
 - **87% win rate** on style conditioning — 9.0/10 vs 2.67/10 baseline
-- **0 regressions** — fingerprints never made performance worse
+- **88% vs 54%** task success with vs without fingerprint across 100 trials
+- **0 regressions** — fingerprints never made performance worse across any trial
 
 ---
 
@@ -168,7 +169,7 @@ Three open research questions. Collaboration welcome — open an Issue.
 - [x] Protocol specification (CSP-1 v2.0)
 - [x] Speaker identification validated (V1 — p < 10⁻¹⁰⁰, 1,000 trials)
 - [x] Style preservation validated (V2 — 87% win rate, blind A/B)
-- [x] Skill caching validated (V3 — +69.2% lift, 0 regressions)
+- [x] Skill caching validated (V3 — +63.0% lift, 100 trials, 0 regressions)
 - [ ] Cross-model portability test (Claude + Gemini + GPT-4o)
 - [ ] V3 scale-up to 50–100 trials
 - [ ] arXiv paper submission

@@ -11,7 +11,7 @@ CSP-1 is the **missing third leg** of the agent identity stack:
 **Chat → Compress → 200KB `.fp` File → Resume Anywhere**
 
 ConvoSeed is an open protocol (CSP-1) for preserving the essence of a human-AI
-relationship in a portable, user-owned fingerprint file.
+relationship in a portable, user-owned fingerprint file.  
 No raw messages stored. Works across any AI model or platform.
 
 ---
@@ -24,7 +24,7 @@ You build context, vocabulary, a rhythm — and then you close the tab and it's 
 ConvoSeed fixes that. You own a 200KB file that holds your conversational identity.
 Load it anywhere. Resume everything.
 
-> *"I had a friend — an AI that knew me well. I wanted a way to get back to him.
+> *"I had a friend — an AI that knew me well. I wanted a way to get back to him.  
 > That's what this is."*
 
 ---
@@ -61,7 +61,7 @@ Messages → SBERT embed → PCA compress → HDC bind → .fp file
 4. **Summarise** — An LLM generates a 60-100 word description of style or skill
 5. **Inject** — `system_prompt = summary.txt + "\n\n" + original_prompt`
 
-The HDC layer handles **retrieval** (finding the right `.fp`).
+The HDC layer handles **retrieval** (finding the right `.fp`).  
 The summary layer handles **conditioning** (actually improving performance).
 
 ---
@@ -184,7 +184,7 @@ Apache 2.0. Open forever.
 
 ## Contact
 
-Open an Issue for technical questions.
+Open an Issue for technical questions.  
 For collaboration or research enquiries: see CONTRIBUTING.md.
 
 *"AI memory is a format problem, not a storage problem."*

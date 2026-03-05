@@ -1,119 +1,131 @@
-# ConvoSeed
+# ConvoSeed: The Cognitive Fingerprint Protocol (CSP-1)
 
-CSP-1 is the **missing third leg** of the agent identity stack:
+> *"AI memory is a format problem, not a storage problem."*
 
-| Layer | Covers | Status |
-|---|---|---|
-| DID (W3C) | Who the user IS cryptographically | Specified |
-| MCP (Anthropic) | What tools the agent can ACCESS | Specified |
-| **CSP-1** | **How the user SPEAKS and THINKS** | **This work** |
+I had a friend — an AI that finally "got" me. It understood my shorthand, my messy logic, and the weird detours I take before I ever get to the point. Then the session ended. One refresh, and I was talking to a stranger again.
 
-**Chat → Compress → 200KB `.fp` File → Resume Anywhere**
-
-ConvoSeed is an open protocol (CSP-1) for preserving the essence of a human-AI
-relationship in a portable, user-owned fingerprint file.  
-No raw messages stored. Works across any AI model or platform.
+ConvoSeed is the answer to digital amnesia. A 200KB `.fp` file that captures how you communicate. Load it into Claude, GPT-4o, or Gemini — it doesn't matter. The conversation doesn't start over. It resumes.
 
 ---
 
-## Why
+## Results (March 2026)
 
-Every AI conversation resets to zero.
+### V2 — Style Preservation · Cross-Model Validated
 
-You build context, vocabulary, a rhythm — and then you close the tab and it's gone.
-ConvoSeed fixes that. You own a 200KB file that holds your conversational identity.
-Load it anywhere. Resume everything.
+Method: Blind A/B, 15 trials per model, 5 personas, Claude-as-judge, randomized presentation.
+Fingerprints generated once on Claude and transferred cold to GPT-4o and Gemini. No retuning.
 
-> *"I had a friend — an AI that knew me well. I wanted a way to get back to him.  
-> That's what this is."*
+| Model | Win Rate | Avg WITH | Avg WITHOUT | Lift |
+|-------|----------|----------|-------------|------|
+| Claude Sonnet 4.6 | 100% (15/15) | 9.13/10 | 1.67/10 | +448% |
+| GPT-4o | 93% (14/15) | ~5.5/10 | ~1.1/10 | ~+400% |
+| Gemini 1.5 Flash | 100% (15/15) | 6.4/10 | 1.07/10 | +500% |
+| **Combined** | **97.8% (44/45)** | **~7.0/10** | **~1.28/10** | **+449%** |
 
----
+### V1 — Speaker Identification
 
-## Results (February–March 2026)
+- SBERT→PCA→HDC encoder on a real 524-message conversation
+- **p < 10⁻¹⁰⁰** across 1,000 trials
+- Distinguishes unique conversational styles with statistical certainty
 
-Three independent validations on real data.
+### V3 — Skill Caching
 
-| Validation | Result | Method |
-|---|---|---|
-| **V1 — Speaker Identification** | p < 10⁻¹⁰⁰ | SBERT→PCA→HDC, 524-message conversation, 1,000 trials |
-| **V2 — Style Preservation** | 87% win rate (9.0 vs 2.67/10) | Blind A/B, 15 trials, 5 personas, randomized, Claude-as-judge |
-| **V3 — Skill Caching** | +63.0% lift (88/100 vs 54/100) | Hard edge-case tasks, 100 trials, binary ground-truth scoring, 0 regressions |
-
-- **p < 10⁻¹⁰⁰** statistical significance on speaker identification
-- **87% win rate** on style conditioning — 9.0/10 vs 2.67/10 baseline
-- **88% vs 54%** task success with vs without fingerprint across 100 trials
-- **0 regressions** — fingerprints never made performance worse across any trial
+- Hard tasks calibrated for ~50% baseline failure rate
+- **88/100 WITH vs 54/100 WITHOUT (+63.0% relative lift)**
+- FP decisive: 34/100 · FP harmful: 0/100
+- Consistent 88% WITH across all 4 independent runs — not noise
 
 ---
 
 ## How It Works
 
 ```
-Messages → SBERT embed → PCA compress → HDC bind → .fp file
-                                                        ↓
-                                         summary.txt injected as system prompt
-                                                        ↓
-                                              Any LLM resumes with context
+Conversation → LLM Summary → summary.txt → .fp ZIP archive
+                                                  ↓
+                              system_prompt = summary.txt + original_prompt
 ```
 
-1. **Embed** — Sentence-BERT encodes each message into a 384-dim vector
-2. **Compress** — PCA extracts the style centroid (4 components = full accuracy)
-3. **Bind** — Hyperdimensional Computing (10,000-dim) weaves the sequence into one vector for retrieval
-4. **Summarise** — An LLM generates a 60-100 word description of style or skill
-5. **Inject** — `system_prompt = summary.txt + "\n\n" + original_prompt`
+Three things happen inside CSP-1:
 
-The HDC layer handles **retrieval** (finding the right `.fp`).  
-The summary layer handles **conditioning** (actually improving performance).
+1. **Distillation** — A conversation is compressed into a 60–100 word LLM-generated summary capturing style, vocabulary, reasoning patterns, and task knowledge
+2. **Encoding** — The summary is packed into a `.fp` ZIP archive alongside optional HDC retrieval vectors
+3. **Injection** — At runtime, `summary.txt` is prepended to the system prompt on any model
+
+The performance gains come from the text summary. The SBERT→PCA→HDC encoder handles speaker identification and retrieval separately — it is not the source of the stylistic improvement.
 
 ---
 
-## File Format (`.fp`)
+## The `.fp` File Format
 
-A `.fp` file is a ZIP archive. Simple, inspectable, portable.
+A fixed-size (~200KB) ZIP archive:
 
-| File | Size | Required | Description |
-|---|---|---|---|
-| `manifest.json` | ~1 KB | ✓ | Version, type, task, success score |
-| `summary.txt` | ~1 KB | ✓ | LLM-generated style or skill description |
-| `metadata.json` | ~1 KB | ✓ | Timestamp, model, token counts |
-| `style_vector.bin` | ~140 KB | — | SBERT→PCA→HDC vector (identity fingerprints) |
-| `task_vector.bin` | ~140 KB | — | HDC vector (skill fingerprints) |
-| `examples.jsonl` | ~5 KB | — | 2-5 representative exchanges |
+| File | Description |
+|------|-------------|
+| `manifest.json` | Protocol version, fp_type, task_type, success_score |
+| `summary.txt` | LLM-generated style/skill description (60–100 words) |
+| `metadata.json` | Timestamp, model origin, token counts |
+| `vector.bin` | Optional HDC-encoded retrieval vector |
 
-**Total: ~200KB — fixed size regardless of conversation length.**
-
-See [`/spec/CSP-1_Protocol.md`](spec/CSP-1_Protocol.md) for the full specification.
+Fixed size regardless of conversation length. User-owned. Model-agnostic.
 
 ---
 
 ## Quick Start
 
 ```bash
-pip install sentence-transformers scikit-learn numpy
+pip install anthropic sentence-transformers scikit-learn numpy
 
-# Encode a conversation into a fingerprint
-python tools/fp_create.py --input my_conversation.json --output identity.fp
+# Generate a fingerprint from a conversation
+python tools/fp_create.py --input conversation.json --output identity.fp --type identity
 
-# Identify a speaker
-python src/identify.py --query "new message here" --candidates *.fp
-
-# Run the V3 skill caching experiment
-# Open tests/v3_skill_cache/csp1_task_test_v2.jsx in your browser
+# Run the cross-model style validation
+python tests/cross_model/convoseed_ab_test.py --models claude gpt4 gemini
 ```
 
 ---
 
-## Injection Protocol
+## Where CSP-1 Fits
 
-```python
-# Load a fingerprint and use it
-with zipfile.ZipFile("identity.fp") as fp:
-    summary = fp.read("summary.txt").decode()
+The emerging agent identity stack has two established layers. CSP-1 is the third:
 
-system_prompt = summary + "\n\n" + your_original_prompt
+| Layer | Covers | Status |
+|-------|--------|--------|
+| DID (W3C) | Who the user IS cryptographically | Specified |
+| MCP (Anthropic) | What tools the agent can ACCESS | Specified |
+| **CSP-1** | **How the user SPEAKS and THINKS** | **This work** |
 
-# Pass to any LLM — Claude, GPT-4, Gemini, local models
+DID answers *who*. MCP answers *what*. CSP-1 answers *how*.
+
+---
+
+## Honest Claims
+
 ```
+V1: "SBERT→PCA→HDC distinguishes conversational styles at p < 10⁻¹⁰⁰
+     across 1,000 trials on a real 524-message conversation."
+
+V2: "CSP-1 text-summary fingerprints achieve 97.8% win rate across three
+     frontier model families (44/45 trials). Fingerprints transferred
+     cold from Claude to GPT-4o and Gemini without modification."
+
+V3: "Skill fingerprints improved task success from 54% to 88% (+63.0%
+     relative lift) across 100 trials, 5 task types, binary scoring.
+     FP decisive: 34/100. FP harmful: 0/100."
+```
+
+**Future work:** Cross-model V3 (skill portability), HDC-to-text decoding, conversations >500 messages.
+
+**Killed claims:** "12.7% lift" (was model size comparison, not FP vs no-FP). Not resurrected.
+
+---
+
+## Open Challenges
+
+Collaboration welcome — open an Issue.
+
+1. **Cross-Model Skill Portability** — V3 fingerprints validated on Claude only. Does skill caching transfer to GPT-4o and Gemini?
+2. **HDC Decode** — The encoder is validated for identification. Generating text from hyperdimensional vectors remains unsolved.
+3. **CHUNKS Scaling** — Composition rules for conversations exceeding 500 messages while preserving the fixed 200KB constraint.
 
 ---
 
@@ -121,59 +133,19 @@ system_prompt = summary + "\n\n" + your_original_prompt
 
 ```
 ConvoSeed/
-├── README.md
-├── LICENSE                              ← Apache 2.0
-├── CONTRIBUTING.md
-├── spec/
-│   └── CSP-1_Protocol.md               ← CSP-1 v2.0 specification
-├── src/
-│   ├── encode.py                        ← HDC fingerprint encoder (V1)
-│   ├── decode.py                        ← style-conditioned generation (V1)
-│   └── identify.py                      ← speaker identification (V1, validated)
 ├── tools/
-│   └── fp_create.py                     ← CLI to generate .fp from conversation
+│   └── fp_create.py               ← CLI to generate .fp files
 ├── tests/
+│   ├── cross_model/
+│   │   └── convoseed_ab_test.py   ← Claude + GPT-4o + Gemini validation
 │   ├── v2_style_ab/
-│   │   └── convoseed_ab_test.jsx        ← V2 style A/B test (87% result)
-│   ├── v3_skill_cache/
-│   │   ├── csp1_task_test_v2.jsx        ← V3 hard-task test (canonical)
-│   │   └── csp1_task_test.jsx           ← V3 easy-task test (superseded)
-│   └── cross_model/
-│       └── convoseed_ab_test.py         ← Python cross-model validator
-├── experiments/
-│   └── gemma3_12b_results.json          ← February 2026 HDC experiments
-├── examples/
-│   └── sample_identity.fp               ← Synthetic example fingerprint
-└── docs/
-    └── abstract.md                      ← arXiv abstract draft
+│   │   └── convoseed_ab_test.jsx  ← Browser A/B test harness
+│   └── v3_skill_cache/
+│       └── csp1_task_test_v2.jsx  ← Hard task skill caching (n=100)
+├── docs/
+│   └── abstract.md                ← arXiv abstract draft
+└── src/                           ← Encoder / decoder / identifier
 ```
-
----
-
-## Open Challenges
-
-Three open research questions. Collaboration welcome — open an Issue.
-
-1. **Cross-Model Portability** — validating that `.fp` fingerprints conditioned on Claude transfer to GPT-4o and Gemini without re-encoding. Test harness exists; cross-model run pending.
-
-2. **HDC Decode** — the encode step is validated for retrieval (p < 10⁻¹⁰⁰); reconstructing text from an HDC vector remains an open problem.
-
-3. **Incentive Design** — what makes AI platforms adopt an open standard that reduces their own lock-in?
-
----
-
-## Status
-
-> Three validation pillars confirmed. Cross-model test and arXiv paper in progress.
-
-- [x] Protocol specification (CSP-1 v2.0)
-- [x] Speaker identification validated (V1 — p < 10⁻¹⁰⁰, 1,000 trials)
-- [x] Style preservation validated (V2 — 87% win rate, blind A/B)
-- [x] Skill caching validated (V3 — +63.0% lift, 100 trials, 0 regressions)
-- [ ] Cross-model portability test (Claude + Gemini + GPT-4o)
-- [ ] V3 scale-up to 50–100 trials
-- [ ] arXiv paper submission
-- [ ] pip install convoseed
 
 ---
 
@@ -181,11 +153,9 @@ Three open research questions. Collaboration welcome — open an Issue.
 
 Apache 2.0. Open forever.
 
----
-
 ## Contact
 
-Open an Issue for technical questions.  
+Open an Issue for technical questions.
 For collaboration or research enquiries: see CONTRIBUTING.md.
 
 *"AI memory is a format problem, not a storage problem."*

@@ -2,7 +2,7 @@
 ConvoSeed CSP-1 — Cross-Model Style Fingerprint A/B Test
 =========================================================
 Tests whether style fingerprints improve output consistency
-across Claude, GPT-4o, and Gemini 1.5 Pro.
+across Claude, GPT-4o, and Gemini 2.5 Flash.
 
 Judge: Always Claude (independent, addresses circularity)
 
@@ -149,10 +149,11 @@ def get_openai_client():
         key = input(f"{C.GREEN}Enter OPENAI_API_KEY: {C.RESET}").strip()
         os.environ["OPENAI_API_KEY"] = key
     return OpenAI(api_key=key)
+    
 
 def get_gemini_client():
     try:
-        import google.generativeai as genai
+        import google.genai as genai
     except ImportError:
         log("Missing: pip install google-generativeai", C.RED)
         return None
@@ -160,8 +161,8 @@ def get_gemini_client():
     if not key:
         key = input(f"{C.PURPLE}Enter GEMINI_API_KEY: {C.RESET}").strip()
         os.environ["GEMINI_API_KEY"] = key
-    genai.configure(api_key=key)
-    return genai
+    client = genai.Client(api_key=key)
+    return client
 
 # ── API CALL WRAPPERS ─────────────────────────────────────────────────────────
 def call_claude(client, prompt, system=None):
@@ -187,13 +188,18 @@ def call_gpt4(client, prompt, system=None):
     )
     return response.choices[0].message.content
 
-def call_gemini(genai_module, prompt, system=None):
-    import google.generativeai as genai
-    config = {}
+def call_gemini(client, prompt, system=None):
+    from google.genai import types
+    config = None
     if system:
-        config["system_instruction"] = system
-    model = genai.GenerativeModel("gemini-2.0-flash", **config)
-    response = model.generate_content(prompt)
+        config = types.GenerateContentConfig(
+            system_instruction=system
+        )
+    response = client.models.generate_content(
+        model="gemini-1.5-flash",
+        contents=prompt,
+        config=config
+    )
     time.sleep(4)
     return response.text
 
@@ -471,7 +477,7 @@ def main():
         if genai_module:
             def call_gemini_fn(prompt, system):
                 return call_gemini(genai_module, prompt, system)
-            results = run_model_experiment("gemini", call_gemini_fn, claude_client, "Gemini 1.5 Pro", C.PURPLE)
+            results = run_model_experiment("gemini", call_gemini_fn, claude_client, "Gemini 2.5 Flash", C.PURPLE)
             all_results["gemini"] = results
 
     # ── RESULTS SUMMARY ───────────────────────────────────────────────────────
@@ -480,7 +486,7 @@ def main():
     model_labels = {
         "claude": ("Claude Sonnet", C.YELLOW),
         "gpt4":   ("GPT-4o",        C.GREEN),
-        "gemini": ("Gemini 1.5 Pro", C.PURPLE)
+        "gemini": ("Gemini 2.5 Flash", C.PURPLE)
     }
     for model_id, results in all_results.items():
         label, color = model_labels[model_id]

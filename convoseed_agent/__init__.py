@@ -23,9 +23,9 @@ Generate in someone's style:
     output = generate_with_prefix("Tell me about your weekend", fp)
 """
 
-__version__ = "1.2.0"
+__version__ = "2.0.0"
 __author__ = "Ashraful Islam"
-__license__ = "MIT"
+__license__ = "Apache-2.0"
 
 from convoseed_agent.encode import encode_conversation
 from convoseed_agent.identify import identify, load_fp

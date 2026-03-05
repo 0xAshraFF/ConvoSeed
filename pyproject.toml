@@ -7,7 +7,7 @@ name = "convoseed-agent"
 version = "2.0.0"
 description = "CSP-1 fingerprint encoder — compress any conversation into a portable 200KB .fp file"
 readme = "PACKAGE_README.md"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 authors = [{ name = "Ashraful Islam", email = "ashraful.islam.cse@gmail.com" }]
 requires-python = ">=3.10"
 keywords = [
@@ -17,7 +17,7 @@ keywords = [
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
